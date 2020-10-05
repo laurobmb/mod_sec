@@ -5,7 +5,7 @@ LABEL maintainer="Lauro Gomes <laurobmb@gmail.com>"
 
 ENV VERSAO="1.19.0"
 ENV FRONTEND="cadastro.laurodepaula.com.br"
-ENV BACKEND="fastapi:8000""
+ENV BACKEND="fastapi:8000"
  
 RUN dnf -y install \
     gcc-c++ \
