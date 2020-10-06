@@ -8,7 +8,7 @@
 > podman pull quay.io/laurobmb/mod_sec
 
 
-#### start container
+#### Start container
 
 ###### env definitions 
 > FRONTEND = dns that should receive the connections, the NGINX virtual host 
@@ -24,7 +24,7 @@
 > cadastro.laurodepaula.com.br/?q="><script>alert(1)</script>"
 
 
-###### Log verify
+#### Log verify
 > [root@4d16582f7e36 /]# cat /var/log/nginx/modsec_audit.log 
 
 ```
