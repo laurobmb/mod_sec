@@ -17,7 +17,7 @@
 
 ###### pod command 
 
-> podman run -it -p80:80 -p443:443 -e FRONTEND=cadastro.laurodepaula.com.br -e BACKEND="www.trf5.jus.br" quay.io/laurobmb/mod_sec
+> podman run -it -p80:80 -p443:443 -e FRONTEND=cadastro.laurodepaula.com.br -e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
 
 ###### test
 
