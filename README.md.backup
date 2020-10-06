@@ -10,20 +10,24 @@
 #### Start container
 
 ###### env definitions 
+
 > FRONTEND = dns that should receive the connections, the NGINX virtual host 
 
 > BACKEND = destination webapp
 
 ###### pod command 
+
 > podman run -it -p80:80 -p443:443 -e FRONTEND=cadastro.laurodepaula.com.br -e BACKEND="www.trf5.jus.br" quay.io/laurobmb/mod_sec
 
 ###### test
+
 > http://cadastro.laurodepaula.com.br/?exec=/bin/bash
 
 > cadastro.laurodepaula.com.br/?q="><script>alert(1)</script>"
 
 
 #### Log verify
+
 > [root@4d16582f7e36 /]# cat /var/log/nginx/modsec_audit.log 
 
 ```
