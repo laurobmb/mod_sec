@@ -19,6 +19,12 @@
 
 > podman run -it -p80:80 -p443:443 -e FRONTEND=cadastro.laurodepaula.com.br -e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
 
+#### Start VM
+
+#### Deploy ansible host 
+
+> ansible-playbook -e frontend=cadastro.laurodepaula.com.br -e backend=www2.recife.pe.gov.br mod_security_install.yml
+
 ###### test
 
 > http://cadastro.laurodepaula.com.br/?exec=/bin/bash

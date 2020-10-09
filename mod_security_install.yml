@@ -1,0 +1,195 @@
+---
+- hosts: podman
+  become: true
+  vars:
+    nginx_modsecurity_branch: v3/master
+    nginx_modsecurity_nginx_branch: master
+    installed_nginx_version: 1.19.0
+    builder: true
+    frontend: cadastro.laurodepaula.com.br
+    backend: www2.recife.pe.gov.br
+  tasks:
+
+  - name: Add the user 'NGINX'
+    user:
+      name: nginx
+      comment: Conta de sistema NGINX
+      system: yes
+      shell: /sbin/nologin
+      home: /usr/local/nginx 
+
+  - name: Install NGINX dependencies
+    dnf:
+      name: "{{item}}"
+      state: present
+    with_items:
+      - gcc-c++
+      - flex
+      - bison
+      - yajl
+      - curl-devel
+      - curl
+      - zlib-devel
+      - pcre-devel
+      - autoconf
+      - automake
+      - git
+      - curl
+      - make
+      - libxml2-devel
+      - pkgconfig
+      - libtool
+      - httpd-devel
+      - redhat-rpm-config
+      - git
+      - wget
+      - openssl
+      - openssl-devel
+      - vim
+      - nano
+      - python38
+      - epel-release
+      - bind-utils
+      - net-tools
+      - vim
+      - bash-completion
+
+  - name: install repository
+    shell: "{{item}}"
+    with_items:
+      - dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+      - dnf --enablerepo=PowerTools install -y doxygen yajl-devel
+      - dnf --enablerepo=remi install -y GeoIP-devel
+
+  - name: clone the modsecurity repository
+    git:
+      repo: "https://github.com/SpiderLabs/ModSecurity.git"
+      version: "{{ nginx_modsecurity_branch }}"
+      accept_hostkey: yes 
+      depth: 1 
+      force: yes
+      dest: /opt/modsec/ModSecurity
+
+  - name: Build install modsecurity 
+    shell: "{{ item }}"
+    args:
+      chdir: /opt/modsec/ModSecurity
+    with_items:
+    - ./build.sh
+    - git submodule init
+    - git submodule update
+    - ./configure
+    - make
+    - make install     
+    when: builder
+
+  - name: clone the modsecurity-nginx repository {{installed_nginx_version}}
+    git:
+      repo: "https://github.com/SpiderLabs/ModSecurity-nginx.git"
+      version: "{{ nginx_modsecurity_nginx_branch }}"
+      accept_hostkey: yes
+      depth: 1
+      force: yes
+      dest: /opt/modsec/ModSecurity-nginx
+
+  - name: clone the owasp-modsecurity-crs repository
+    git:
+      repo: "https://github.com/SpiderLabs/owasp-modsecurity-crs.git"
+      accept_hostkey: yes
+      depth: 1
+      force: yes
+      dest: /usr/local/nginx/conf/owasp-crs
+
+  - name: download and extract the nginx sources for building the module
+    unarchive: 
+      src: "http://nginx.org/download/nginx-{{ installed_nginx_version }}.tar.gz"
+      dest: /opt
+      creates: "/opt/nginx-{{ installed_nginx_version }}"
+      remote_src: yes
+
+  - name: Build install nginx
+    shell: "{{ item }}"
+    args:
+      chdir: "/opt/nginx-{{ installed_nginx_version }}"
+    with_items:
+      - ./configure --user=nginx --group=nginx --with-pcre-jit --with-debug --with-http_ssl_module --with-http_v2_module --with-http_realip_module --add-module=/opt/modsec/ModSecurity-nginx
+      - make
+      - make install
+    when: builder
+  
+  - name: Copiando CRS
+    shell: "{{ item }}"
+    with_items:
+    - cp /usr/local/nginx/conf/owasp-crs/crs-setup.conf.example /usr/local/nginx/conf/owasp-crs/crs-setup.conf
+    - cp /opt/modsec/ModSecurity/modsecurity.conf-recommended /usr/local/nginx/conf/modsecurity.conf
+    - cp /opt/modsec/ModSecurity/unicode.mapping /usr/local/nginx/conf/
+
+  - name: copiando arquivos de configuração
+    copy: 
+      src: "{{item}}"
+      dest: /usr/local/nginx/conf/
+    with_items:
+      - ./nginx.conf
+      - ./modsecurity.conf
+
+  - name: Criando diretorios
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: nginx
+      group: nginx
+    with_items:
+    - /usr/local/nginx/conf.d/
+    - /var/log/nginx
+    - /root/.certs/
+
+  - name: Create symbolic link 
+    file:
+      src: /usr/local/nginx/sbin/nginx
+      dest: /usr/sbin/nginx
+      state: link
+
+  - name: Copiando Virtual Host
+    template:
+      src: virtualHost.j2
+      dest: /usr/local/nginx/conf.d/virtualHost.conf
+
+  - name: Instalando certificado digital autoassinado
+    shell: "{{ item }}"
+    args:
+      chdir: /root/.certs/
+    with_items:
+      - openssl req -x509 -newkey rsa:4096 -keyout nginx.key -out nginx.crt -days 10000 -nodes -subj "/C=BR/ST=Pernambuco/L=Recife/O=Suporte Conectado/O=SPC/CN=*.conectado.local"    
+
+  - name: Copiando arquivo de serviço 
+    copy:
+      src: ./nginx.service
+      dest: /etc/systemd/system/nginx.service
+
+  - name: Habilidanto regra HTTPS
+    firewalld:
+      service: https
+      permanent: yes
+      state: enabled
+      zone: public
+
+  - name: Habilidanto regra HTTP
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+      zone: public
+  
+  - name: Atualizando regras de firewalld
+    systemd:
+      name: firewalld
+      state: restarted
+      enabled: yes
+
+  - name: Start NGINX
+    systemd:
+      name: nginx
+      state: restarted
+      enabled: yes
+      daemon_reload: yes
+
