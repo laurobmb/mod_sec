@@ -1,5 +1,5 @@
 ---
-- hosts: podman
+- hosts: proxy-reverse
   become: true
   vars:
     nginx_modsecurity_branch: v3/master
@@ -8,8 +8,39 @@
     builder: true
     frontend: cadastro.laurodepaula.com.br
     backend: www2.recife.pe.gov.br
-  tasks:
+    pacotes:
+    - gcc-c++
+    - flex
+    - bison
+    - yajl
+    - curl-devel
+    - curl
+    - zlib-devel
+    - pcre-devel
+    - autoconf
+    - automake
+    - git
+    - curl
+    - make
+    - libxml2-devel
+    - pkgconfig
+    - libtool
+    - httpd-devel
+    - redhat-rpm-config
+    - git
+    - wget
+    - openssl
+    - openssl-devel
+    - vim
+    - nano
+    - python38
+    - epel-release
+    - bind-utils
+    - net-tools
+    - vim
+    - bash-completion
 
+  tasks:
   - name: Add the user 'NGINX'
     user:
       name: nginx
@@ -20,39 +51,8 @@
 
   - name: Install NGINX dependencies
     dnf:
-      name: "{{item}}"
+      name: "{{pacotes}}"
       state: present
-    with_items:
-      - gcc-c++
-      - flex
-      - bison
-      - yajl
-      - curl-devel
-      - curl
-      - zlib-devel
-      - pcre-devel
-      - autoconf
-      - automake
-      - git
-      - curl
-      - make
-      - libxml2-devel
-      - pkgconfig
-      - libtool
-      - httpd-devel
-      - redhat-rpm-config
-      - git
-      - wget
-      - openssl
-      - openssl-devel
-      - vim
-      - nano
-      - python38
-      - epel-release
-      - bind-utils
-      - net-tools
-      - vim
-      - bash-completion
 
   - name: install repository
     shell: "{{item}}"
