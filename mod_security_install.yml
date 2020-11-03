@@ -1,5 +1,5 @@
 ---
-- hosts: proxy-reverse
+- hosts: waf-aws
   become: true
   vars:
     nginx_modsecurity_branch: v3/master
@@ -39,6 +39,7 @@
     - net-tools
     - vim
     - bash-completion
+    - python3-dnf-4.2.17-7.el8_2.noarch
 
   tasks:
   - name: Add the user 'NGINX'
@@ -172,6 +173,7 @@
       permanent: yes
       state: enabled
       zone: public
+    ignore_errors: True
 
   - name: Habilidanto regra HTTP
     firewalld:
@@ -179,13 +181,15 @@
       permanent: yes
       state: enabled
       zone: public
-  
+    ignore_errors: True
+
   - name: Atualizando regras de firewalld
     systemd:
       name: firewalld
       state: restarted
       enabled: yes
-
+    ignore_errors: True
+  
   - name: Start NGINX
     systemd:
       name: nginx
