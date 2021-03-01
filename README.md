@@ -1,7 +1,7 @@
-[![Docker Repository on Quay](https://quay.io/repository/laurobmb/mod_sec/status "Docker Repository on Quay")](https://quay.io/repository/laurobmb/mod_sec)
-
-
 # PROXY PASS Nginx with mod_security 
+
+[![Docker Repository on Quay](https://quay.io/repository/laurobmb/mod_sec/status "Docker Repository on Quay")](https://quay.io/repository/laurobmb/mod_sec) ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/laurobmb/wafmodsec)
+
 
 Este projeto tem a finalidade de provê uma segurança a nível de aplicação usando um firewall de aplicações web open-source [mod-security](https://www.modsecurity.org/), está aplicação de segurança esta no mercado a muitos anos e continua atualizando suas listas e repositórios de regras. Ainda nesse projeto adicionamos regras que cobrem os itens do [OWASP top 10](https://owasp.org/www-project-modsecurity-core-rule-set/), com isso tentamos reduzir ao máximo a superfície de ataque a aplicação.
 
