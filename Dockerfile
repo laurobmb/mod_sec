@@ -103,7 +103,9 @@ RUN mkdir /var/log/nginx/
 
 COPY ./files/modsecurity.conf /usr/local/nginx/conf/modsecurity.conf
 
-RUN git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /usr/local/nginx/conf/owasp-crs
+#RUN git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /usr/local/nginx/conf/owasp-crs
+
+RUN git https://github.com/coreruleset/coreruleset.git /usr/local/nginx/conf/owasp-crs
 
 RUN cp /usr/local/nginx/conf/owasp-crs/crs-setup.conf.example /usr/local/nginx/conf/owasp-crs/crs-setup.conf
 
