@@ -3,21 +3,34 @@
 
 # PROXY PASS Nginx with mod_security 
 
+Este projeto tem a finalidade de provê uma segurança a nível de aplicação usando um firewall de aplicações web open-source [mod-security](https://www.modsecurity.org/), está aplicação de segurança esta no mercado a muitos anos e continua atualizando suas listas e repositórios de regras. Ainda nesse projeto adicionamos regras que cobrem os itens do [OWASP top 10](https://owasp.org/www-project-modsecurity-core-rule-set/), com isso tentamos reduzir ao máximo a superfície de ataque a aplicação.
+
+
 ### Usage 
 
-> podman pull quay.io/laurobmb/mod_sec
+	podman pull quay.io/laurobmb/mod_sec
 
-#### Start container
+### Start container
+#### env definitions 
 
-###### env definitions 
+	FRONTEND = dns that should receive the connections, the NGINX virtual host 
+	BACKEND = destination webapp
 
-> FRONTEND = dns that should receive the connections, the NGINX virtual host 
+#### pod command 
 
-> BACKEND = destination webapp
+	podman run -it -p80:80 -p443:443 \
+		-e FRONTEND=cadastro.laurodepaula.com.br \	
+		-e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
 
-###### pod command 
-
-> podman run -it -p80:80 -p443:443 -e FRONTEND=cadastro.laurodepaula.com.br -e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
+    podman run -it -p80:80 -p443:443 \
+        -e FRONTEND="www.w0rm30.seg.br" \
+        -e BACKEND="127.0.0.1:8080" \
+        localhost/mod-sec:latest
+        
+    docker run -it -p80:80 -p443:443 \
+        -e FRONTEND="ilcm.glpi.com" \
+        -e BACKEND="lbglpi-1785284617.us-east-1.elb.amazonaws.com" \
+        waf:latest
 
 #### Start VM
 

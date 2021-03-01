@@ -36,7 +36,9 @@ RUN dnf -y install \
 
 RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
-RUN dnf --enablerepo=PowerTools install -y doxygen yajl-devel
+RUN dnf -y install dnf-plugins-core
+RUN dnf config-manager --set-enabled powertools
+RUN dnf install -y doxygen yajl-devel
 RUN dnf --enablerepo=remi install -y GeoIP-devel
 
 RUN mkdir -p /opt/modsec/ModSecurity
@@ -89,29 +91,31 @@ RUN cd /root/.certs/ ;\
 RUN cp /opt/modsec/ModSecurity/modsecurity.conf-recommended /usr/local/nginx/conf/modsecurity.conf
 RUN cp /opt/modsec/ModSecurity/unicode.mapping /usr/local/nginx/conf/
 
-COPY nginx.conf /usr/local/nginx/conf/nginx.conf
+COPY ./files/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 RUN mkdir /usr/local/nginx/conf.d/
 
-COPY virtualHost.conf /usr/local/nginx/conf.d/
+COPY ./files/virtualHost.conf /usr/local/nginx/conf.d/
 
-COPY virtualHost.template /usr/local/nginx/conf.d/
+COPY ./files/virtualHost.template /usr/local/nginx/conf.d/
 
 RUN mkdir /var/log/nginx/
 
-COPY modsecurity.conf /usr/local/nginx/conf/modsecurity.conf
+COPY ./files/modsecurity.conf /usr/local/nginx/conf/modsecurity.conf
 
 RUN git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /usr/local/nginx/conf/owasp-crs
 
 RUN cp /usr/local/nginx/conf/owasp-crs/crs-setup.conf.example /usr/local/nginx/conf/owasp-crs/crs-setup.conf
 
-COPY entrypoint.py /root/
+COPY ./files/entrypoint.py /root/
 
-COPY start.sh /root/
+COPY ./files/start.sh /root/
 
 RUN python3 /root/entrypoint.py
 
 RUN dnf clean all
+
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
 
 EXPOSE 80/tcp
 
