@@ -16,7 +16,7 @@ spec:
         app: modsecurity
     spec:
       containers:
-      - name: mod_sec
+      - name: modsec
         image: quay.io/laurobmb/mod_sec:latest
         ports:
         - containerPort: 80
