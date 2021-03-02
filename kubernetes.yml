@@ -1,0 +1,84 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modsecdeployment
+  labels:
+    app: modsecurity
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: modsecurity
+  template:
+    metadata:
+      labels:
+        app: modsecurity
+    spec:
+      containers:
+      - name: mod_sec
+        image: quay.io/laurobmb/mod_sec:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: FRONTEND
+          value: app5.w0rm30.seg.br
+        - name: BACKEND
+          value: www2.recife.pe.gov.br
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: modsecingress
+  annotations:
+   kubernetes.io/ingress.class: "nginx"
+   nginx.ingress.kubernetes.io/enable-owasp-modsecurity-crs: "true"
+   nginx.ingress.kubernetes.io/enable-modsecurity: "true"
+   nginx.ingress.kubernetes.io/modsecurity-snippet: |
+      SecRuleEngine On
+      SecRequestBodyAccess On
+      SecAuditEngine RelevantOnly
+      SecAuditLogParts ABIJDEFHZ
+      SecAuditLog /var/log/modsec_audit.log
+      SecRule REQUEST_HEADERS:User-Agent \"fern-scanner\" \"log,deny,id:107,status:403,msg:\'Fern Scanner Identified\'\"
+spec:
+  rules:
+#  - host: mod.conectado.local
+#    http:
+#      paths:
+#      - backend:
+#          service:
+#            name: modsecsvc
+#            port:
+#              number: 80
+#        path: /
+#        pathType: Prefix
+
+  - host: app5.w0rm30.seg.br
+    http:
+      paths:
+      - backend:
+          service:
+            name: modsecsvc
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: modsecsvc
+  labels:
+    app: modsecurity
+spec:
+  selector:
+    app: modsecurity
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    
