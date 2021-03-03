@@ -6,7 +6,7 @@ metadata:
   labels:
     app: modsecurity
 spec:
-  replicas: 6
+  replicas: 3
   selector:
     matchLabels:
       app: modsecurity
@@ -25,6 +25,13 @@ spec:
           value: app5.w0rm30.seg.br
         - name: BACKEND
           value: www2.recife.pe.gov.br
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "32Mi"
+          limits:
+            cpu: "100m"
+            memory: "64Mi"
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -82,3 +89,18 @@ spec:
     targetPort: 80
     protocol: TCP
     
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: modsechpa
+  labels:
+    app: modsecurity
+spec:
+  maxReplicas: 10
+  minReplicas: 2
+  scaleTargetRef: 
+    apiVersion: apps/v1
+    kind: Deployment
+    name: modsecdeployment
+  targetCPUUtilizationPercentage: 80
