@@ -1,6 +1,6 @@
 import os,re
 
-versao = os.environ['VERSAO']
+versao = os.environ['NGINXVERSION']
 frontend = os.environ['FRONTEND']
 backend = os.environ['BACKEND']
 
