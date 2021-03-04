@@ -8,7 +8,8 @@ Este projeto tem a finalidade de provê uma segurança a nível de aplicação u
 
 ### Usage 
 
-	podman pull quay.io/laurobmb/mod_sec
+	podman pull quay.io/laurobmb/mod_sec:latest
+    podman push laurobmb/wafmodsec:latest
 
 ### Start container
 #### env definitions 

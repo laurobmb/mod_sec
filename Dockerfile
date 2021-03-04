@@ -3,7 +3,9 @@ FROM centos:8
 LABEL version="3.0.4"
 LABEL maintainer="Lauro Gomes <laurobmb@gmail.com>"
 
-ENV NGINXVERSION="1.19.0"
+ENV NGINX_VERSION="1.19.0"
+ENV MOD_SECURITY_VERSION="3.0.4"
+ENV MOD_SECURITY_NGINX_VERSION="1.0.1"
 ENV CORERULESET="3.3.0"
 ENV FRONTEND="cadastro.laurodepaula.com.br"
 ENV BACKEND="fastapi:8000"
@@ -14,12 +16,10 @@ RUN dnf -y install \
     bison \
     yajl \
     curl-devel \
-    curl \
     zlib-devel \
     pcre-devel \
     autoconf \
     automake \
-    git \
     curl \
     make \
     libxml2-devel \
@@ -31,8 +31,6 @@ RUN dnf -y install \
     wget \
     openssl \
     openssl-devel \
-    vim \
-    nano \
     python38
 
 RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm ;\
@@ -42,30 +40,31 @@ RUN dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.n
     dnf install -y doxygen yajl-devel ;\
     dnf --enablerepo=remi install -y GeoIP-devel
 
-RUN mkdir -p /opt/modsec/ModSecurity ;\
-    git clone --depth 1 -b v3/master --single-branch https://github.com/SpiderLabs/ModSecurity /opt/modsec/ModSecurity
+RUN mkdir -p /opt/modsec/ModSecurity &&\
+    wget https://github.com/SpiderLabs/ModSecurity/releases/download/v${MOD_SECURITY_VERSION}/modsecurity-v${MOD_SECURITY_VERSION}.tar.gz  &&\
+    tar xzf modsecurity-v${MOD_SECURITY_VERSION}.tar.gz &&\
+    mv modsecurity-v${MOD_SECURITY_VERSION}/* /opt/modsec/ModSecurity
 
-RUN cd /opt/modsec/ModSecurity ;\
-    git submodule init ;\
-    git submodule update ;\
-    ./build.sh; \
-    ./configure; \
-    make ;\
-    make install;
+RUN cd /opt/modsec/ModSecurity &&\
+    ./build.sh &&\
+    ./configure &&\
+    make &&\
+    make install
 
-RUN mkdir /opt/modsec/ModSecurity-nginx;\
-    cd /opt/modsec;\
-    git clone https://github.com/SpiderLabs/ModSecurity-nginx.git
+RUN mkdir /opt/modsec/ModSecurity-nginx &&\
+    wget https://github.com/SpiderLabs/ModSecurity-nginx/releases/download/v${MOD_SECURITY_NGINX_VERSION}/modsecurity-nginx-v${MOD_SECURITY_NGINX_VERSION}.tar.gz &&\
+    tar xzf modsecurity-nginx-v${MOD_SECURITY_NGINX_VERSION}.tar.gz &&\
+    mv modsecurity-nginx-v${MOD_SECURITY_NGINX_VERSION}/* /opt/modsec/ModSecurity-nginx
 
 RUN useradd -r -M -s /sbin/nologin -d /usr/local/nginx nginx
 
-RUN mkdir /opt/nginx-${NGINXVERSION}
+RUN mkdir /opt/nginx-${NGINX_VERSION}
 
 RUN cd /opt/; \
-    wget http://nginx.org/download/nginx-${NGINXVERSION}.tar.gz ;\
-    tar xzf nginx-${NGINXVERSION}.tar.gz
+    wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz ;\
+    tar xzf nginx-${NGINX_VERSION}.tar.gz
 
-RUN cd /opt/nginx-${NGINXVERSION};\
+RUN cd /opt/nginx-${NGINX_VERSION};\
     ./configure \
     --user=nginx \
     --group=nginx \
