@@ -88,19 +88,18 @@ RUN cd /root/.certs/ ;\
     -nodes \
     -subj "/C=BR/ST=Pernambuco/L=Recife/O=Suporte Conectado/O=SPC/CN=*.conectado.local"
 
-RUN cp /opt/modsec/ModSecurity/modsecurity.conf-recommended /usr/local/nginx/conf/modsecurity.conf ;\
-    cp /opt/modsec/ModSecurity/unicode.mapping /usr/local/nginx/conf/ ;\
-    mkdir /usr/local/nginx/conf.d/ ;\
-    mkdir /var/log/nginx/ ;\
-    git clone https://github.com/coreruleset/coreruleset.git /usr/local/nginx/conf/owasp-crs ;\
-    cp /usr/local/nginx/conf/owasp-crs/crs-setup.conf.example /usr/local/nginx/conf/owasp-crs/crs-setup.conf ;\
+RUN cp /opt/modsec/ModSecurity/modsecurity.conf-recommended /usr/local/nginx/conf/modsecurity.conf && \
+    cp /opt/modsec/ModSecurity/unicode.mapping /usr/local/nginx/conf/ && \
+    mkdir /usr/local/nginx/conf.d/ && \
+    mkdir /var/log/nginx/ && \
+    mkdir /usr/local/nginx/errorpages && \
+    git clone https://github.com/coreruleset/coreruleset.git /usr/local/nginx/conf/owasp-crs && \
+    cp /usr/local/nginx/conf/owasp-crs/crs-setup.conf.example /usr/local/nginx/conf/owasp-crs/crs-setup.conf && \
     dnf clean all
 
 COPY ./files/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 COPY ./files/virtualHost.conf /usr/local/nginx/conf.d/
-
-COPY ./files/virtualHost.template /usr/local/nginx/conf.d/
 
 COPY ./files/entrypoint.py /root/
 
@@ -108,11 +107,12 @@ COPY ./files/start.sh /root/
 
 COPY ./files/modsecurity.conf /usr/local/nginx/conf/modsecurity.conf
 
-#COPY ./files/errorpages.conf /usr/local/nginx/conf.d/
+COPY ./files/virtualHost.template /usr/local/nginx/conf.d/
 
-RUN python3 /root/entrypoint.py 
+COPY ./files/errorpages  /usr/local/nginx/errorpages
 
-RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+RUN python3 /root/entrypoint.py  && \
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 
 EXPOSE 80/tcp 443/tcp
