@@ -107,11 +107,11 @@ RUN wget https://github.com/coreruleset/coreruleset/archive/v${CORERULESET}.tar.
     mv /usr/local/nginx/conf/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /usr/local/nginx/conf/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf &&\
     mv /usr/local/nginx/conf/owasp-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /usr/local/nginx/conf/owasp-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
 
-COPY ./files/scripts/ /root/
 COPY ./files/conf/ /usr/local/nginx/conf/
 COPY ./files/errorpages/  /usr/local/nginx/errorpages/
 COPY ./files/conf.d/ /usr/local/nginx/conf.d/
 COPY ./files/rules/ /usr/local/nginx/conf/owasp-crs/rules/
+COPY ./files/scripts/ /root/
 
 RUN dnf clean all &&\
     ln -sf /dev/stdout /var/log/nginx/access.log && \
