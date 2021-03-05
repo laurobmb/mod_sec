@@ -6,7 +6,7 @@
     nginx_modsecurity_nginx_branch: master
     installed_nginx_version: 1.19.0
     builder: true
-    frontend: cadastro.laurodepaula.com.br
+    frontend: www.w0rm30.seg.br
     backend: www2.recife.pe.gov.br
     pacotes:
     - gcc-c++
@@ -55,11 +55,17 @@
       name: "{{pacotes}}"
       state: present
 
-  - name: install repository
+  - name: install repository's
     shell: "{{item}}"
+    args:
+      chdir: $HOME
+      creates: repository.log      
     with_items:
-      - dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
-      - dnf --enablerepo=PowerTools install -y doxygen yajl-devel
+      - dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm 
+      - dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm 
+      - dnf -y install dnf-plugins-core 
+      - dnf config-manager --set-enabled powertools 
+      - dnf install -y doxygen yajl-devel 
       - dnf --enablerepo=remi install -y GeoIP-devel
 
   - name: clone the modsecurity repository
@@ -75,6 +81,7 @@
     shell: "{{ item }}"
     args:
       chdir: /opt/modsec/ModSecurity
+      creates: build.log      
     with_items:
     - ./build.sh
     - git submodule init
@@ -112,6 +119,7 @@
     shell: "{{ item }}"
     args:
       chdir: "/opt/nginx-{{ installed_nginx_version }}"
+      creates: build.log
     with_items:
       - ./configure --user=nginx --group=nginx --with-pcre-jit --with-debug --with-http_ssl_module --with-http_v2_module --with-http_realip_module --add-module=/opt/modsec/ModSecurity-nginx
       - make
@@ -130,8 +138,8 @@
       src: "{{item}}"
       dest: /usr/local/nginx/conf/
     with_items:
-      - ./nginx.conf
-      - ./modsecurity.conf
+      - ./files/conf/nginx.conf
+      - ./files/conf/modsecurity.conf
 
   - name: Criando diretorios
     file:
@@ -152,7 +160,7 @@
 
   - name: Copiando Virtual Host
     template:
-      src: virtualHost.j2
+      src: ./files/conf.d/virtualHost.j2
       dest: /usr/local/nginx/conf.d/virtualHost.conf
 
   - name: Instalando certificado digital autoassinado
@@ -164,8 +172,18 @@
 
   - name: Copiando arquivo de serviço 
     copy:
-      src: ./nginx.service
+      src: ./files/nginx.service
       dest: /etc/systemd/system/nginx.service
+
+  - name: Copiando paginas de erro
+    copy:
+      src: ./files/errorpages/{{item}}
+      dest: /usr/local/nginx/errorpages/
+    with_items:
+    - 50x.html
+    - 400.html
+    - 403.html
+    - 404.html
 
   - name: Habilidanto regra HTTPS
     firewalld:
