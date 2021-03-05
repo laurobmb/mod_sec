@@ -7,8 +7,8 @@ ENV NGINX_VERSION="1.19.0"
 ENV MOD_SECURITY_VERSION="3.0.4"
 ENV MOD_SECURITY_NGINX_VERSION="1.0.1"
 ENV CORERULESET="3.3.0"
-ENV FRONTEND="cadastro.laurodepaula.com.br"
-ENV BACKEND="fastapi:8000"
+ENV FRONTEND="server name or IP input"
+ENV BACKEND="server name or IP output"
  
 RUN dnf -y install \
     gcc-c++ \
@@ -63,6 +63,11 @@ RUN mkdir /opt/nginx-${NGINX_VERSION}
 RUN cd /opt/; \
     wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz ;\
     tar xzf nginx-${NGINX_VERSION}.tar.gz
+
+COPY ./files/hide_version.sh /root
+
+RUN chmod +x /root/hide_version.sh && \
+    /root/hide_version.sh
 
 RUN cd /opt/nginx-${NGINX_VERSION};\
     ./configure \

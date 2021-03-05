@@ -64,6 +64,11 @@ RUN cd /opt/; \
     wget http://nginx.org/download/nginx-${NGINXVERSION}.tar.gz ;\
     tar xzf nginx-${NGINXVERSION}.tar.gz
 
+COPY ./files/hide_version.sh /root
+
+RUN chmod +x /root/hide_version.sh && \
+    /root/hide_version.sh
+
 RUN cd /opt/nginx-${NGINXVERSION};\
     ./configure \
     --user=nginx \
