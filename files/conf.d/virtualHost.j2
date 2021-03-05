@@ -5,6 +5,45 @@ server {
 	access_log /var/log/nginx/access.log;
 	error_log /var/log/nginx/error.log;
 	server_name {{frontend}};
+
+	#add_header Content-Security-Policy "default-src 'self';";
+	add_header Strict-Transport-Security 'max-age=31536000; includeSubDomains; preload';
+	add_header X-XSS-Protection "1; mode=block";
+	add_header X-Frame-Options "SAMEORIGIN";
+	add_header X-Content-Type-Options nosniff;
+	add_header Referrer-Policy "strict-origin";
+	add_header Permissions-Policy "geolocation=();midi=();notifications=();push=();sync-xhr=();microphone=();camera=();magnetometer=();gyroscope=();speaker=(self);vibrate=();fullscreen=(self);payment=();";
+
+	if ($http_user_agent ~* LWP::Simple|BBBike|wget) {
+		return 403;
+	}
+
+	add_header Allow "GET, POST, HEAD" always;
+	if ( $request_method !~ ^(GET|POST|HEAD)$ ) {
+		return 405;
+	}
+
+	error_page 400 /400.html;
+		location = /400.html {
+    	root  /usr/local/nginx/errorpages;
+	}
+
+	error_page 404 /404.html;
+		location = /404.html {
+    	root  /usr/local/nginx/errorpages;
+	}
+
+	error_page 403 /403.html;
+		location = /403.html {
+		ssi on;
+    	root  /usr/local/nginx/errorpages;
+	}
+
+	error_page 500 502 503 504 /50x.html;
+		location = /50x.html {
+    	root  /usr/local/nginx/errorpages;
+	}
+
 	location / {
 		proxy_pass http://{{backend}}/;
 		proxy_set_header Host $host;
