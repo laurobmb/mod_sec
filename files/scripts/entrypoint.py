@@ -8,7 +8,7 @@ input_file="/usr/local/nginx/conf.d/virtualHost.template"
 output_file="/usr/local/nginx/conf.d/virtualHost.conf"
 
 with open(output_file,'w') as fd:
-	print("Arquivo zerado")
+	print("Arquivo zerado /usr/local/nginx/conf.d/virtualHost.conf")
 
 with open(input_file,'r') as fd:
 	with open(output_file, 'a') as sd:
@@ -20,4 +20,4 @@ with open(input_file,'r') as fd:
 			else:
 				sd.write(arquivo_de_saida)
 
-print("Arquivo Completo")
+print("Arquivo Completo /usr/local/nginx/conf.d/virtualHost.conf")

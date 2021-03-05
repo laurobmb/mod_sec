@@ -64,7 +64,7 @@ RUN cd /opt/; \
     wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz ;\
     tar xzf nginx-${NGINX_VERSION}.tar.gz
 
-COPY ./files/hide_version.sh /root
+COPY ./files/scripts/hide_version.sh /root/hide_version.sh
 
 RUN chmod +x /root/hide_version.sh && \
     /root/hide_version.sh
@@ -84,8 +84,8 @@ RUN cd /opt/nginx-${NGINX_VERSION};\
 
 RUN ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
 
-RUN mkdir /root/.certs/
-RUN cd /root/.certs/ ;\
+RUN mkdir /root/.certs/ ;\
+    cd /root/.certs/ ;\
     openssl req -x509 -newkey rsa:4096 \
     -keyout nginx.key \
     -out nginx.crt \
@@ -97,8 +97,7 @@ RUN cp /opt/modsec/ModSecurity/modsecurity.conf-recommended /usr/local/nginx/con
     cp /opt/modsec/ModSecurity/unicode.mapping /usr/local/nginx/conf/ && \
     mkdir /usr/local/nginx/conf.d/ && \
     mkdir /var/log/nginx/ && \
-    mkdir /usr/local/nginx/errorpages && \
-    dnf clean all
+    mkdir /usr/local/nginx/errorpages
 
 RUN wget https://github.com/coreruleset/coreruleset/archive/v${CORERULESET}.tar.gz &&\ 
     tar xzf v${CORERULESET}.tar.gz &&\
@@ -108,21 +107,14 @@ RUN wget https://github.com/coreruleset/coreruleset/archive/v${CORERULESET}.tar.
     mv /usr/local/nginx/conf/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /usr/local/nginx/conf/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf &&\
     mv /usr/local/nginx/conf/owasp-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /usr/local/nginx/conf/owasp-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
 
-COPY ./files/nginx.conf /usr/local/nginx/conf/nginx.conf
+COPY ./files/scripts/ /root/
+COPY ./files/conf/ /usr/local/nginx/conf/
+COPY ./files/errorpages/  /usr/local/nginx/errorpages/
+COPY ./files/conf.d/ /usr/local/nginx/conf.d/
+COPY ./files/rules/ /usr/local/nginx/conf/owasp-crs/rules/
 
-COPY ./files/virtualHost.conf /usr/local/nginx/conf.d/
-
-COPY ./files/entrypoint.py /root/
-
-COPY ./files/start.sh /root/
-
-COPY ./files/modsecurity.conf /usr/local/nginx/conf/modsecurity.conf
-
-COPY ./files/errorpages  /usr/local/nginx/errorpages
-
-COPY ./files/virtualHost.template /usr/local/nginx/conf.d/
-
-RUN python3 /root/entrypoint.py  && \
+RUN dnf clean all &&\
+    python3 /root/entrypoint.py  && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stderr /var/log/nginx/error.log
 

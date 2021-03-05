@@ -39,12 +39,13 @@ Este projeto tem a finalidade de provê uma segurança a nível de aplicação u
 
 > ansible-playbook -e frontend=cadastro.laurodepaula.com.br -e backend=www2.recife.pe.gov.br mod_security_install.yml
 
-###### test
+#### Test
 
-> http://cadastro.laurodepaula.com.br/?exec=/bin/bash
-
-> http://cadastro.laurodepaula.com.br/?q="><script>alert(1)</script>"
-
+    http://cadastro.laurodepaula.com.br/?exec=/bin/bash
+    http://cadastro.laurodepaula.com.br/?q="><script>alert(1)</script>"
+    http://127.0.0.1:8080/?id=3 or 'a'='a'
+    http://127.0.0.1:8080/?q="><script>alert(1)</script>"
+    
 
 #### Log verify
 

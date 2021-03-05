@@ -1,9 +1,10 @@
 #!/bin/bash
-echo Executando NgINX com o $FRONTEND e o $BACKEND
+echo "Executando NgINX com o FRONTEND: $FRONTEND e o BACKEND: $BACKEND"
+echo ""
 python3 /root/entrypoint.py
+bash /root/remove_rules.sh
 
 if nginx -t; then
-	#cat /usr/local/nginx/conf.d/virtualHost.conf
 	nginx -g 'daemon off;'
 else
 	echo "Erro !!!!"
