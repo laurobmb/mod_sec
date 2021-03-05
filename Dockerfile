@@ -114,9 +114,9 @@ COPY ./files/conf.d/ /usr/local/nginx/conf.d/
 COPY ./files/rules/ /usr/local/nginx/conf/owasp-crs/rules/
 
 RUN dnf clean all &&\
-    python3 /root/entrypoint.py  && \
     ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log
+    ln -sf /dev/stdout /var/log/nginx/modsec_audit.log && \
+    ln -sf /dev/stdout /var/log/nginx/error.log
 
 EXPOSE 80/tcp 443/tcp
 
