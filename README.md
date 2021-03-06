@@ -11,33 +11,28 @@ Este projeto tem a finalidade de provê uma segurança a nível de aplicação u
 	podman pull quay.io/laurobmb/mod_sec:latest
     podman pull laurobmb/wafmodsec:latest
 
-### Start container
+### Start POD
+
 #### env definitions 
 
 	FRONTEND = dns that should receive the connections, the NGINX virtual host 
 	BACKEND = destination webapp
 
-#### pod command 
+#### POD command example
 
 	podman run -it -p80:80 -p443:443 \
 		-e FRONTEND=cadastro.laurodepaula.com.br \	
 		-e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
 
-    podman run -it -p80:80 -p443:443 \
-        -e FRONTEND="www.w0rm30.seg.br" \
-        -e BACKEND="127.0.0.1:8080" \
-        localhost/mod-sec:latest
-        
-    docker run -it -p80:80 -p443:443 \
-        -e FRONTEND="ilcm.glpi.com" \
-        -e BACKEND="lbglpi-1785284617.us-east-1.elb.amazonaws.com" \
-        waf:latest
-
 #### Start VM
 
-#### Deploy ansible host 
+#### Deploy Ansible host 
 
-> ansible-playbook -e frontend=cadastro.laurodepaula.com.br -e backend=www2.recife.pe.gov.br mod_security_install.yml
+> ansible-playbook -e frontend=cadastro.laurodepaula.com.br -e backend=www2.recife.pe.gov.br ansible_modsecurity_install.yml
+
+#### BlackList IP
+
+[blacklist.txt](files/conf/blacklist.txt)
 
 #### Test
 
