@@ -5,7 +5,6 @@
 This project has the purpose to provide an application level security using an open-source web application firewall [mod-security](https://www.modsecurity.org/), this security application is in the market for many years and keeps updating its rule lists and repositories. Also in this project we added rules that cover the items from [OWASP top 10](https://owasp.org/www-project-modsecurity-core-rule-set/), with this we try to reduce as much as possible the attack surface to the application.
 
 
-Translated with www.DeepL.com/Translator (free version)
 ![](photos/a.png)
 
 ### Usage 
