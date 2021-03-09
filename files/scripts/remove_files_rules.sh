@@ -11,7 +11,7 @@ scripts=(
 )
 
 for i in ${scripts[*]}; do 
-    echo -n "Removendo regra -> $i"
+    echo -n "Removendo arquivo de regra -> $i"
     rm -f $i
     echo ""
 done
