@@ -1,5 +1,12 @@
 #!/bin/bash
-echo "Executando NgINX com o FRONTEND: $FRONTEND e o BACKEND: $BACKEND"
+echo ""
+if [ $MODE == "1" ]; then
+	echo "###### Executando NgINX no modo PROXY REVERSO com o FRONTEND: $FRONTEND e o BACKEND: $BACKEND ###### "
+elif [ $MODE == "2" ]; then
+	echo "###### Executando NgINX no modo FORWARD PROXY ###### "
+else
+	echo "Modo desconhecido"
+fi
 echo ""
 
 python3 /root/entrypoint.py

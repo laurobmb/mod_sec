@@ -9,6 +9,7 @@ ENV MOD_SECURITY_NGINX_VERSION="1.0.1"
 ENV CORERULESET="3.3.0"
 ENV FRONTEND="server name or IP input"
 ENV BACKEND="server name or IP output"
+ENV MODE="2" 
  
 RUN dnf -y install \
     gcc-c++ \
@@ -113,7 +114,9 @@ COPY ./files/conf.d/ /usr/local/nginx/conf.d/
 COPY ./files/rules/ /usr/local/nginx/conf/owasp-crs/rules/
 COPY ./files/scripts/ /root/
 
-RUN dnf clean all &&\
+RUN mkdir -p /usr/local/nginx/html/_v/healthcheck ;\
+    mv /usr/local/nginx/errorpages/200.html /usr/local/nginx/html/_v/healthcheck/  ;\
+    dnf clean all &&\
     ln -sf /dev/stdout /var/log/nginx/access.log && \
     ln -sf /dev/stdout /var/log/nginx/modsec_audit.log && \
     ln -sf /dev/stdout /var/log/nginx/error.log
