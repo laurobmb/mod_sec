@@ -7,8 +7,8 @@ ENV NGINX_VERSION="1.19.0"
 ENV MOD_SECURITY_VERSION="3.0.4"
 ENV MOD_SECURITY_NGINX_VERSION="1.0.1"
 ENV CORERULESET="3.3.0"
-ENV FRONTEND="server name or IP input"
-ENV BACKEND="server name or IP output"
+ENV FRONTEND="server_name_or_IP_input"
+ENV BACKEND="server_name_or_IP_input"
 ENV MODE="2" 
  
 RUN dnf -y install \

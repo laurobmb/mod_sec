@@ -4,6 +4,7 @@
 
 This project has the purpose to provide an application level security using an open-source web application firewall [mod-security](https://www.modsecurity.org/), this security application is in the market for many years and keeps updating its rule lists and repositories. Also in this project we added rules that cover the items from [OWASP top 10](https://owasp.org/www-project-modsecurity-core-rule-set/), with this we try to reduce as much as possible the attack surface to the application.
 
+Exist two work modes in PROXY, FORWARD PROXY and REVERSE PROXY. The mode reverse proxy need two variables to good work, FRONTEND and BACKEND, the mode forward proxy do not need this variables, if case fill this variables on mode forward proxy will be ignored.  
 
 ![](photos/a.png)
 
@@ -14,16 +15,23 @@ This project has the purpose to provide an application level security using an o
 
 ### Start POD
 
-#### env definitions 
-
+#### ENV definitions 
+	
+	MODE = { 1 or 2 } 
+		1 = Proxy reverse mode
+		2 = Proxy forward mode
 	FRONTEND = dns that should receive the connections, the NGINX virtual host 
 	BACKEND = destination webapp
 
 #### POD command example
 
 	podman run -it -p80:80 -p443:443 \
+		-e MODE=1
 		-e FRONTEND=app5.w0rm30.seg.br \	
 		-e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
+
+	podman run -it -p80:80 -p443:443 -e MODE=1 quay.io/laurobmb/mod_sec
+
 
 #### Start VM
 
