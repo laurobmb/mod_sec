@@ -25,15 +25,9 @@ Exist two work modes in PROXY, FORWARD PROXY and REVERSE PROXY. The mode reverse
 
 #### POD command example
 
-	podman run -it -p80:80 -p443:443 	\
-		--rm --name=waf					\ 	
-		-e MODE=1						\
-		-e FRONTEND=app5.w0rm30.seg.br 	\	
-		-e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
+	podman run -it -p80:80 -p443:443 --rm --name=waf -e MODE=1 -e FRONTEND=app5.w0rm30.seg.br -e BACKEND="www2.recife.pe.gov.br" quay.io/laurobmb/mod_sec
 
-	podman run -it -p80:80 -p443:443		\
-		--rm --name=waf						\ 
-		-e MODE=2 quay.io/laurobmb/mod_sec
+	podman run -it -p80:80 -p443:443 --rm --name=waf -e MODE=2 quay.io/laurobmb/mod_sec
 
 #### Start VM
 
