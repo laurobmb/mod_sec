@@ -121,9 +121,7 @@ COPY ./files/scripts/ /root/
 COPY ./files/errorpages/  /usr/local/nginx/errorpages/
 #VOLUME [ "/usr/local/nginx/errorpages/" ]
 
-RUN mkdir -p /usr/local/nginx/html/_v/healthcheck ;\
-    mv /usr/local/nginx/errorpages/200.html /usr/local/nginx/html/_v/healthcheck/ ;\
-    chown -R nginx.nginx /usr/local/nginx/
+RUN chown -R nginx.nginx /usr/local/nginx/
 
 EXPOSE 80/tcp 443/tcp
 

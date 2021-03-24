@@ -9,6 +9,10 @@ server {
 	access_log /var/log/nginx/access.log;
 	error_log /var/log/nginx/error.log;
 
+    location /_v/healthcheck {
+    	return 200 'up!';
+	}
+
 	error_page 400 /400.html;
 		location = /400.html {
     	root  /usr/local/nginx/errorpages;
@@ -54,6 +58,10 @@ server {
 	modsecurity_rules_file /usr/local/nginx/conf/modsecurity.conf;
 	access_log /var/log/nginx/access.log;
 	error_log /var/log/nginx/error.log;
+
+    location /_v/healthcheck {
+    	return 200 'up!';
+	}
 
 	error_page 400 /400.html;
 		location = /400.html {
