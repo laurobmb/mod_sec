@@ -18,7 +18,7 @@ services:
       networks:
          - modsec_network
       volumes:
-         - ./files/errorpages/403.html:/usr/local/nginx/errorpages/403.html
+         - ./files/errorpages/:/usr/local/nginx/errorpages/
 
    web:
       image: nginx:1.19-alpine

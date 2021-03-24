@@ -113,7 +113,8 @@ COPY ./files/conf.d/ /usr/local/nginx/conf.d/
 COPY ./files/rules/ /usr/local/nginx/conf/owasp-crs/rules/
 COPY ./files/scripts/ /root/
 
-VOLUME [ "/usr/local/nginx/errorpages/" ]
+COPY ./files/errorpages/ /usr/local/nginx/errorpages/
+#VOLUME [ "/usr/local/nginx/errorpages/" ]
 
 RUN mkdir -p /usr/local/nginx/html/_v/healthcheck ;\
     mv /usr/local/nginx/errorpages/200.html /usr/local/nginx/html/_v/healthcheck/  ;\
