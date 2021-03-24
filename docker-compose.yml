@@ -3,9 +3,9 @@ services:
 
    mod_sec:
       container_name: mod_sec
-      image: quay.io/laurobmb/mod_sec:latest
-      #build: 
-      #   context: .
+      #image: quay.io/laurobmb/mod_sec:latest
+      build: 
+         context: .
       ports:
          - "80:80"
          - "443:443"
