@@ -109,10 +109,11 @@ RUN wget https://github.com/coreruleset/coreruleset/archive/v${CORERULESET}.tar.
     mv /usr/local/nginx/conf/owasp-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf.example /usr/local/nginx/conf/owasp-crs/rules/RESPONSE-999-EXCLUSION-RULES-AFTER-CRS.conf
 
 COPY ./files/conf/ /usr/local/nginx/conf/
-COPY ./files/errorpages/  /usr/local/nginx/errorpages/
 COPY ./files/conf.d/ /usr/local/nginx/conf.d/
 COPY ./files/rules/ /usr/local/nginx/conf/owasp-crs/rules/
 COPY ./files/scripts/ /root/
+
+VOLUME [ "/usr/local/nginx/errorpages/" ]
 
 RUN mkdir -p /usr/local/nginx/html/_v/healthcheck ;\
     mv /usr/local/nginx/errorpages/200.html /usr/local/nginx/html/_v/healthcheck/  ;\
