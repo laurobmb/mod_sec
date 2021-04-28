@@ -1,38 +1,19 @@
 version: '3.4' 
 services:
-
-   mod_sec:
-      container_name: mod_sec
-      #image: quay.io/laurobmb/mod_sec:latest
-      build: 
-         context: .
-      ports:
-         - "80:80"
-         - "443:443"
-      links:
-         - web
-      environment:
-         - "MODE=1"
-         - "FRONTEND=app5.w0rm30.seg.br"         
-         - "BACKEND=web"
-      networks:
-         - modsec_network
-      volumes:
-         - ./files/errorpages/:/usr/local/nginx/errorpages/
-
-   web:
-      image: nginx:1.19-alpine
-      container_name: web
-      volumes:
-         - ./files/conf/example.html:/public_html/index.html
-         - ./files/conf/default.conf:/etc/nginx/conf.d/default.conf
-      networks:
-         - modsec_network
-
+  waf:
+    container_name: waf
+    build:
+        context: .
+    ports:
+        - "80:80"
+    restart: on-failure
+    networks:
+        - modsec_network
 volumes:
-  esdata1:
-    driver: local
+    esdata1:
+        driver: local
 
 networks:
-  modsec_network:
-   driver: bridge
+    modsec_network:
+        driver: bridge
+
