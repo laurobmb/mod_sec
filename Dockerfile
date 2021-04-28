@@ -44,10 +44,6 @@ RUN cd /opt \
     && wget -O - http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zxfv - \
     && mv /opt/nginx-$NGINX_VERSION /opt/nginx \
     && cd /opt/nginx \
-    #&& sed -i 's@"nginx/"@"-/"@g' src/core/nginx.h \
-    #&& sed -i 's@r->headers_out.server == NULL@0@g' src/http/ngx_http_header_filter_module.c \
-    #&& sed -i 's@r->headers_out.server == NULL@0@g' src/http/v2/ngx_http_v2_filter_module.c \
-    #&& sed -i 's@<hr><center>nginx</center>@@g' src/http/ngx_http_special_response.c \
     && sed -i 's/"Server: nginx" CRLF/"Server: sem_versao" CRLF/g' src/http/ngx_http_header_filter_module.c \
     && sed -i 's/"Server: " NGINX_VER CRLF/"Server: sem_versao" CRLF/g' src/http/ngx_http_header_filter_module.c \
     && ./configure --with-compat --add-dynamic-module=/opt/ModSecurity-nginx \
